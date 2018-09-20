@@ -45,8 +45,8 @@ class MoviesTable extends Component {
         // console.log('movie', movie)
         const updatedMovies = this.state.moviesArray.filter((oldMovies) => oldMovies.title !== movie.title)
         this.setState({
-                moviesArray: updatedMovies
-            })
+            moviesArray: updatedMovies
+        })
     }
 
     handleLike = (movie) => {
@@ -72,38 +72,57 @@ class MoviesTable extends Component {
         })
     }
 
-    render() {
-        let {length: counter} = this.state.moviesArray
-        const {pageSize, currentPage, selectedGenre, sortColumn, moviesArray} = this.state
+    getPageData = () => {
+
+        const {
+            pageSize,
+            currentPage,
+            selectedGenre,
+            sortColumn,
+            moviesArray
+        } = this.state
 
         const filtered = selectedGenre && selectedGenre._id
             ? moviesArray.filter(m => m.genre._id === selectedGenre._id)
             : moviesArray
 
-       const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order])
+        const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order])
 
         const movies = paginate(sorted, currentPage, pageSize)
+        return {totalCount: filtered.length, data: movies}
+    }
+
+    render() {
+        let {length: counter} = this.state.moviesArray
+        const {
+            pageSize,
+            currentPage,
+            sortColumn,
+        } = this.state
+
+        const {totalCount, data} = this.getPageData()
+
         return <div className='movies'>
             {
                 (!counter) ?
-                    <h1 className="title__message"> Add some movies</h1>
+                    <h1> Add some movies</h1>
                     :
                     <div className="row">
-                        <div className='col-4'>
+                        <div className='col-4 genres-group'>
                             <GenresGroup genres={this.state.genres}
                                          selectedGenre={this.state.selectedGenre}
                                          onGenreSelect={this.handleGenreSelect}
                             />
                         </div>
                         <div className="col-8">
-                            <h1 className="title__message"> Showing {filtered.length} movies in database </h1>
-                            <MovieTable movies={movies}
+                            <h1> Showing {totalCount} movies in database </h1>
+                            <MovieTable movies={data}
                                         sortColumn={sortColumn}
                                         onLike={this.handleLike}
                                         onDelete={this.handleDelete}
                                         onSort={this.handleSort}
                             />
-                            <Pagination itemsCount={filtered.length}
+                            <Pagination itemsCount={totalCount}
                                         pageSize={pageSize}
                                         currentPage={currentPage}
                                         onPageChange={this.handlePageChange}

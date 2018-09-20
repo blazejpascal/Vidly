@@ -1,6 +1,7 @@
-.title {
-
+.movies {
+    padding: 20px 0 0 0;
 }
-.title__message {
-    padding: 16px 0 0 0;
+
+.genres-group {
+    margin: 0 auto;
 }
