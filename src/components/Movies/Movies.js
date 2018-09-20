@@ -12,7 +12,7 @@ import {paginate} from '../../utils/paginate'
 import './Movies.css'
 
 
-class MoviesTable extends Component {
+class Movies extends Component {
 
     constructor() {
         super()
@@ -134,4 +134,4 @@ class MoviesTable extends Component {
     }
 }
 
-export default MoviesTable
+export default Movies
