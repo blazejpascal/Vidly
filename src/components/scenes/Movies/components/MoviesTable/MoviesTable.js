@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
-import Heart from '../../../shared/Heart/Heart'
-import Table from '../../../shared/Table/Table'
+import Heart from '../../../../shared/Heart/Heart'
+import Table from '../../../../shared/Table/Table'
 
 class MoviesTable extends Component {
     columns = [

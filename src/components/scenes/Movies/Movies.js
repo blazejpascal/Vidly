@@ -2,14 +2,16 @@ import React, {Component} from 'react'
 import _ from 'lodash'
 
 
-import Pagination from '../shared/Pagination/Pagination'
-import GenresGroup from '../shared/GenresGroup/GenresGroup'
+import Pagination from '../../shared/Pagination/Pagination'
+import GenresGroup from '../../shared/GenresGroup/GenresGroup'
 import MovieTable from './components/MoviesTable/MoviesTable'
 
-import {getMovies} from '../../services/fakeMovieService'
-import {getGenres} from '../../services/fakeGenreService'
-import {paginate} from '../../utils/paginate'
+import {getMovies} from '../../../services/fakeMovieService'
+import {getGenres} from '../../../services/fakeGenreService'
+import {paginate} from '../../../utils/paginate'
 import './Movies.css'
+
+import {Link} from 'react-router-dom'
 
 
 class Movies extends Component {
