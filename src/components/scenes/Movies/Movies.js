@@ -117,6 +117,7 @@ class Movies extends Component {
                             />
                         </div>
                         <div className="col-8">
+                            <Link to="/movies/new" className="btn btn-primary" style={{marginBottom: 20}} > New Movie </Link>
                             <h1> Showing {totalCount} movies in database </h1>
                             <MovieTable movies={data}
                                         sortColumn={sortColumn}
