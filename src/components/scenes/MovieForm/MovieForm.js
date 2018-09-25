@@ -8,13 +8,13 @@ import {getMovies, saveMovie} from "../../../services/fakeMovieService"
 
 class MyComponent extends Form {
     state = {
-        data: {title: '', genreID: '', numberInStock: '', dailyRentalRate: ''},
+        data: {title: '', genreId: '', numberInStock: '', dailyRentalRate: ''},
         errors: {},
         genres: [],
     }
 
     schema = {
-        _id: Joi.string(),
+        // _id: Joi.string(),
         title: Joi.string().label('Title').required(),
         genreId: Joi.string().label('Genre').required(),
         numberInStock: Joi.number().integer().min(0).max(100).label('Number in Stock'),
