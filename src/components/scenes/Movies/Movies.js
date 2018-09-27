@@ -12,6 +12,7 @@ import {paginate} from '../../../utils/paginate'
 import './Movies.css'
 
 import {Link} from 'react-router-dom'
+import SearchBar from "../../shared/SearchBar/SearchBar";
 
 
 class Movies extends Component {
@@ -23,7 +24,9 @@ class Movies extends Component {
             genres: [],
             pageSize: 4,
             currentPage: 1,
-            sortColumn: {path: 'title', order: 'asc'}
+            sortColumn: {path: 'title', order: 'asc'},
+            searchQuery: "",
+            selectedGenre: null
 
         }
     }
@@ -64,9 +67,17 @@ class Movies extends Component {
     handleGenreSelect = (genre) => {
         this.setState({
             selectedGenre: genre,
+            searchQuery: "",
             currentPage: 1
         })
     }
+
+    handleSearch = (query) => {
+        this.setState({
+            searchQuery: query, selectedGenre: null, currentPage: 1
+        })
+    }
+
 
     handleSort = (sortColumn) => {
         this.setState({
@@ -81,12 +92,16 @@ class Movies extends Component {
             currentPage,
             selectedGenre,
             sortColumn,
-            moviesArray
+            moviesArray,
+            searchQuery
         } = this.state
 
-        const filtered = selectedGenre && selectedGenre._id
-            ? moviesArray.filter(m => m.genre._id === selectedGenre._id)
-            : moviesArray
+        let filtered = moviesArray;
+        if(searchQuery)
+            filtered = moviesArray.filter(m => m.title.toLowerCase().startsWith(searchQuery.toLowerCase()))
+        else if (selectedGenre && selectedGenre._id)
+            filtered = moviesArray.filter(m => m.genre._id === selectedGenre._id)
+
 
         const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order])
 
@@ -100,6 +115,7 @@ class Movies extends Component {
             pageSize,
             currentPage,
             sortColumn,
+            searchQuery,
         } = this.state
 
         const {totalCount, data} = this.getPageData()
@@ -119,6 +135,7 @@ class Movies extends Component {
                         <div className="col-8">
                             <Link to="/movies/new" className="btn btn-primary" style={{marginBottom: 20}} > New Movie </Link>
                             <h1> Showing {totalCount} movies in database </h1>
+                            <SearchBar  value={searchQuery} onChange={this.handleSearch} />
                             <MovieTable movies={data}
                                         sortColumn={sortColumn}
                                         onLike={this.handleLike}
