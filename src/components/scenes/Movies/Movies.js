@@ -1,16 +1,16 @@
 import React, {Component} from 'react'
-import _ from 'lodash'
-
+import { orderBy } from 'lodash'
 
 import Pagination from '../../shared/Pagination/Pagination'
 import GenresGroup from '../../shared/GenresGroup/GenresGroup'
 import MovieTable from './components/MoviesTable/MoviesTable'
 
-import {getMovies} from '../../../services/fakeMovieService'
-import {getGenres} from '../../../services/fakeGenreService'
+import {getMovies , deleteMovie} from '../../../services/movieService'
+import {getGenres} from '../../../services/genreService'
 import {paginate} from '../../../utils/paginate'
 import './Movies.css'
 
+import {toast} from 'react-toastify'
 import {Link} from 'react-router-dom'
 import SearchBar from "../../shared/SearchBar/SearchBar";
 
@@ -31,9 +31,10 @@ class Movies extends Component {
         }
     }
 
-    componentDidMount() {
-        let movies = getMovies()
-        const genres = [{_id: '', name: 'All Genres'}, ...getGenres()]
+    async componentDidMount() {
+        const {data} = await getGenres()
+        const {data: movies} = await getMovies()
+        const genres = [{_id: '', name: 'All Genres'}, ...data]
         this.setState({
             moviesArray: movies,
             genres
@@ -46,12 +47,25 @@ class Movies extends Component {
         })
     }
 
-    handleDelete = (movie) => {
-        // console.log('movie', movie)
-        const updatedMovies = this.state.moviesArray.filter((oldMovies) => oldMovies.title !== movie.title)
+    handleDelete = async (movie) => {
+        const originalMovies = this.state.moviesArray
+
+        const updatedMovies =  originalMovies.filter((oldMovies) => oldMovies.title !== movie.title)
         this.setState({
             moviesArray: updatedMovies
         })
+
+        try {
+            await deleteMovie(movie._id)
+        }
+        catch (e) {
+            if (e.response && e.response.status === 404)
+                toast.error("This post has already been deleted")
+
+            this.setState({
+                moviesArray: originalMovies
+            })
+        }
     }
 
     handleLike = (movie) => {
@@ -103,7 +117,7 @@ class Movies extends Component {
             filtered = moviesArray.filter(m => m.genre._id === selectedGenre._id)
 
 
-        const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order])
+        const sorted = orderBy(filtered, [sortColumn.path], [sortColumn.order])
 
         const movies = paginate(sorted, currentPage, pageSize)
         return {totalCount: filtered.length, data: movies}
